@@ -1,0 +1,53 @@
+{
+  "name": "claude-quiz-plugin",
+  "displayName": "Claude Quiz",
+  "description": "Shows IT tech quizzes while Claude Code is thinking",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "claudeQuiz.setupHooks",
+        "title": "Claude Quiz: Setup Claude Code Hooks"
+      },
+      {
+        "command": "claudeQuiz.showQuiz",
+        "title": "Claude Quiz: Show Quiz Panel"
+      }
+    ],
+    "configuration": {
+      "title": "Claude Quiz",
+      "properties": {
+        "claudeQuiz.anthropicApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Anthropic API key for dynamic quiz generation"
+        },
+        "claudeQuiz.debounceMs": {
+          "type": "number",
+          "default": 1000,
+          "description": "Minimum processing time (ms) before showing a quiz"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.24.0",
+    "typescript": "^5.3.3"
+  }
+}
