@@ -1,0 +1,75 @@
+body {
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    color: var(--vscode-foreground);
+    padding: 16px;
+}
+
+#topic {
+    font-size: 0.75em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+    margin-bottom: 8px;
+}
+
+#question {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+#choices {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#choices li {
+    margin-bottom: 8px;
+}
+
+#choices button {
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border: 1px solid var(--vscode-button-border, transparent);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+#choices button:hover:not(:disabled) {
+    background: var(--vscode-button-secondaryHoverBackground);
+}
+
+#choices button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+#result {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+#result.correct {
+    background: var(--vscode-testing-iconPassed, #2d7a2d);
+    color: white;
+}
+
+#result.incorrect {
+    background: var(--vscode-testing-iconFailed, #c72e2e);
+    color: white;
+}
+
+.explanation {
+    font-weight: normal;
+    margin-top: 8px;
+    font-size: 0.9em;
+    opacity: 0.9;
+}
