@@ -35,9 +35,10 @@ function containsCode(text: string): boolean {
 }
 
 export async function generateQuiz(topic: string | null): Promise<Quiz> {
-    const apiKey = vscode.workspace.getConfiguration('claudeQuiz').get<string>('anthropicApiKey');
+    const apiKey = vscode.workspace.getConfiguration('claudeQuiz').get<string>('anthropicApiKey')
+        || process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
-        throw new Error('Anthropic API キーが設定されていません。設定から claudeQuiz.anthropicApiKey を設定してください。');
+        throw new Error('Anthropic API キーが設定されていません。VSCode設定の claudeQuiz.anthropicApiKey、または環境変数 ANTHROPIC_API_KEY を設定してください。');
     }
 
     const client = new Anthropic({ apiKey });
