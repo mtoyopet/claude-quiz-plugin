@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { QuizHistory } from './quizHistory';
 
 export interface Quiz {
     topic: string;
@@ -15,7 +16,7 @@ export class QuizPanel {
     private currentQuiz: Quiz | null = null;
     onNextQuiz: (() => void) | null = null;
 
-    constructor(extensionUri: vscode.Uri) {
+    constructor(extensionUri: vscode.Uri, private readonly history: QuizHistory) {
         this.extensionUri = extensionUri;
     }
 
@@ -51,11 +52,22 @@ export class QuizPanel {
         this.panel.webview.onDidReceiveMessage((msg) => {
             if (msg.type === 'answer') {
                 this.isAnswered = true;
+                const quiz = this.currentQuiz!;
+                const isCorrect = msg.index === quiz.answer;
+                this.history.add({
+                    topic: quiz.topic,
+                    question: quiz.question,
+                    choices: quiz.choices,
+                    correctAnswer: quiz.answer,
+                    userAnswer: msg.index,
+                    isCorrect,
+                    explanation: quiz.explanation,
+                });
                 this.panel?.webview.postMessage({
                     type: 'result',
-                    correct: msg.index === this.currentQuiz!.answer,
-                    answer: this.currentQuiz!.answer,
-                    explanation: this.currentQuiz!.explanation
+                    correct: isCorrect,
+                    answer: quiz.answer,
+                    explanation: quiz.explanation,
                 });
             } else if (msg.type === 'nextQuiz') {
                 this.onNextQuiz?.();

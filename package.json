@@ -18,6 +18,10 @@
       {
         "command": "claudeQuiz.showQuiz",
         "title": "Claude Quiz: Show Quiz Panel"
+      },
+      {
+        "command": "claudeQuiz.showHistory",
+        "title": "Claude Quiz: Show History"
       }
     ],
     "configuration": {

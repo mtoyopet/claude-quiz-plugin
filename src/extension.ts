@@ -6,12 +6,16 @@ import { SessionContext } from './sessionContext';
 import { StateWatcher } from './stateWatcher';
 import { generateQuiz } from './quizGenerator';
 import { QuizPanel } from './quizPanel';
+import { QuizHistory } from './quizHistory';
+import { HistoryPanel } from './historyPanel';
 
 const DEBOUNCE_MS = 1000;
 
 export function activate(context: vscode.ExtensionContext) {
     const sessionContext = new SessionContext();
-    const quizPanel = new QuizPanel(context.extensionUri);
+    const quizHistory = new QuizHistory(context.globalState);
+    const quizPanel = new QuizPanel(context.extensionUri, quizHistory);
+    const historyPanel = new HistoryPanel(context.extensionUri, quizHistory);
     let debounceTimer: NodeJS.Timeout | null = null;
 
     quizPanel.onNextQuiz = async () => {
@@ -98,7 +102,11 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    context.subscriptions.push(setupHooks, showQuiz, { dispose: () => watcher.stop() });
+    const showHistory = vscode.commands.registerCommand('claudeQuiz.showHistory', () => {
+        historyPanel.show();
+    });
+
+    context.subscriptions.push(setupHooks, showQuiz, showHistory, { dispose: () => watcher.stop() });
 }
 
 export function deactivate() {}
