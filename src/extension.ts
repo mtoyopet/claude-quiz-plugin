@@ -14,6 +14,17 @@ export function activate(context: vscode.ExtensionContext) {
     const quizPanel = new QuizPanel(context.extensionUri);
     let debounceTimer: NodeJS.Timeout | null = null;
 
+    quizPanel.onNextQuiz = async () => {
+        const topic = sessionContext.inferTopic();
+        try {
+            const quiz = await generateQuiz(topic);
+            quizPanel.show(quiz);
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : String(err);
+            vscode.window.showWarningMessage(`Claude Quiz: ${msg}`);
+        }
+    };
+
     const watcher = new StateWatcher(
         (event) => {
             // 処理開始: コンテキスト蓄積 + デバウンス後にクイズ表示

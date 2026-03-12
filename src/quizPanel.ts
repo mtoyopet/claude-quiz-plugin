@@ -13,6 +13,7 @@ export class QuizPanel {
     private readonly extensionUri: vscode.Uri;
     private isAnswered = true;
     private currentQuiz: Quiz | null = null;
+    onNextQuiz: (() => void) | null = null;
 
     constructor(extensionUri: vscode.Uri) {
         this.extensionUri = extensionUri;
@@ -56,6 +57,8 @@ export class QuizPanel {
                     answer: this.currentQuiz!.answer,
                     explanation: this.currentQuiz!.explanation
                 });
+            } else if (msg.type === 'nextQuiz') {
+                this.onNextQuiz?.();
             }
         });
 

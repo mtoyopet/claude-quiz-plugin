@@ -21,10 +21,18 @@ document.getElementById('choices').addEventListener('click', (e) => {
 
 window.addEventListener('message', (e) => {
     const msg = e.data;
-    if (msg.type !== 'result') { return; }
+    if (msg.type === 'result') {
+        const resultEl = document.getElementById('result');
+        resultEl.textContent = msg.correct ? '正解！' : `不正解。正解は「${quiz.choices[msg.answer]}」`;
+        resultEl.className = msg.correct ? 'correct' : 'incorrect';
+        resultEl.insertAdjacentHTML('beforeend', `<p class="explanation">${msg.explanation}</p>`);
+        resultEl.insertAdjacentHTML('beforeend', `<button id="next-btn">次の問題を表示する</button>`);
 
-    const resultEl = document.getElementById('result');
-    resultEl.textContent = msg.correct ? '正解！' : `不正解。正解は「${quiz.choices[msg.answer]}」`;
-    resultEl.className = msg.correct ? 'correct' : 'incorrect';
-    resultEl.insertAdjacentHTML('beforeend', `<p class="explanation">${msg.explanation}</p>`);
+        document.getElementById('next-btn').addEventListener('click', () => {
+            const btn = document.getElementById('next-btn');
+            btn.disabled = true;
+            btn.textContent = '生成中...';
+            vscode.postMessage({ type: 'nextQuiz' });
+        });
+    }
 });
