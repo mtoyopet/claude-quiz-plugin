@@ -18,6 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
     const historyPanel = new HistoryPanel(context.extensionUri, quizHistory);
     let debounceTimer: NodeJS.Timeout | null = null;
 
+    quizPanel.onShowHistory = () => historyPanel.show();
+
     quizPanel.onNextQuiz = async () => {
         const topic = sessionContext.inferTopic();
         try {

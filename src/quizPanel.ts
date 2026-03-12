@@ -13,15 +13,17 @@ export class QuizPanel {
     private panel: vscode.WebviewPanel | null = null;
     private readonly extensionUri: vscode.Uri;
     private isAnswered = true;
+    private isShowingResult = false;
     private currentQuiz: Quiz | null = null;
     onNextQuiz: (() => void) | null = null;
+    onShowHistory: (() => void) | null = null;
 
     constructor(extensionUri: vscode.Uri, private readonly history: QuizHistory) {
         this.extensionUri = extensionUri;
     }
 
     show(quiz: Quiz): void {
-        if (this.panel && !this.isAnswered) {
+        if (this.panel && (!this.isAnswered || this.isShowingResult)) {
             return;
         }
 
@@ -47,11 +49,13 @@ export class QuizPanel {
         this.panel.onDidDispose(() => {
             this.panel = null;
             this.isAnswered = true;
+            this.isShowingResult = false;
         });
 
         this.panel.webview.onDidReceiveMessage((msg) => {
             if (msg.type === 'answer') {
                 this.isAnswered = true;
+                this.isShowingResult = true;
                 const quiz = this.currentQuiz!;
                 const isCorrect = msg.index === quiz.answer;
                 this.history.add({
@@ -70,7 +74,10 @@ export class QuizPanel {
                     explanation: quiz.explanation,
                 });
             } else if (msg.type === 'nextQuiz') {
+                this.isShowingResult = false;
                 this.onNextQuiz?.();
+            } else if (msg.type === 'showHistory') {
+                this.onShowHistory?.();
             }
         });
 
@@ -79,6 +86,7 @@ export class QuizPanel {
 
     reset(): void {
         this.isAnswered = true;
+        this.isShowingResult = false;
     }
 
     dispose(): void {

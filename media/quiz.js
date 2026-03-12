@@ -17,7 +17,14 @@ document.body.innerHTML = `
     `).join('')}
   </ul>
   <div id="result"></div>
+  <div id="footer">
+    <button id="history-btn">履歴を開く</button>
+  </div>
 `;
+
+document.getElementById('history-btn').addEventListener('click', () => {
+    vscode.postMessage({ type: 'showHistory' });
+});
 
 document.getElementById('choices').addEventListener('click', (e) => {
     const btn = e.target.closest('button');
