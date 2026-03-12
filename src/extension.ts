@@ -32,12 +32,13 @@ export function activate(context: vscode.ExtensionContext) {
             }, DEBOUNCE_MS);
         },
         () => {
-            // 処理完了: デバウンスタイマーをキャンセル、コンテキストリセット
+            // 処理完了: デバウンスタイマーをキャンセル、コンテキスト・パネルをリセット
             if (debounceTimer) {
                 clearTimeout(debounceTimer);
                 debounceTimer = null;
             }
             sessionContext.reset();
+            quizPanel.reset();
         }
     );
 

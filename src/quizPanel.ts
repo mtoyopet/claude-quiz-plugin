@@ -11,16 +11,25 @@ export interface Quiz {
 export class QuizPanel {
     private panel: vscode.WebviewPanel | null = null;
     private readonly extensionUri: vscode.Uri;
+    private isAnswered = true;
+    private currentQuiz: Quiz | null = null;
 
     constructor(extensionUri: vscode.Uri) {
         this.extensionUri = extensionUri;
     }
 
     show(quiz: Quiz): void {
+        if (this.panel && !this.isAnswered) {
+            return;
+        }
+
+        this.isAnswered = false;
+        this.currentQuiz = quiz;
+
         if (this.panel) {
             this.panel.webview.html = this.buildHtml(quiz);
             this.panel.reveal();
-            return
+            return;
         }
 
         this.panel = vscode.window.createWebviewPanel(
@@ -33,20 +42,28 @@ export class QuizPanel {
             }
         );
 
-        this.panel.onDidDispose(() => { this.panel = null; })
+        this.panel.onDidDispose(() => {
+            this.panel = null;
+            this.isAnswered = true;
+        });
 
         this.panel.webview.onDidReceiveMessage((msg) => {
             if (msg.type === 'answer') {
+                this.isAnswered = true;
                 this.panel?.webview.postMessage({
                     type: 'result',
-                    correct: msg.index === quiz.answer,
-                    answer: quiz.answer,
-                    explanation: quiz.explanation
-                })
+                    correct: msg.index === this.currentQuiz!.answer,
+                    answer: this.currentQuiz!.answer,
+                    explanation: this.currentQuiz!.explanation
+                });
             }
-        })
+        });
 
         this.panel.webview.html = this.buildHtml(quiz);
+    }
+
+    reset(): void {
+        this.isAnswered = true;
     }
 
     dispose(): void {
