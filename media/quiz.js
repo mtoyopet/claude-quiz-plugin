@@ -1,12 +1,19 @@
 const vscode = acquireVsCodeApi();
 const quiz = window.__quiz;
 
+const labels = ['A', 'B', 'C', 'D'];
+
 document.body.innerHTML = `
   <div id="topic">${quiz.topic} のクイズ</div>
-  <div id="question">${quiz.question}</div>
+  <div id="question-box">
+    <div id="question">${quiz.question}</div>
+  </div>
   <ul id="choices">
     ${quiz.choices.map((c, i) => `
-      <li><button data-index="${i}">${c}</button></li>
+      <li><button data-index="${i}">
+        <span class="choice-label">${labels[i]}:</span>
+        <span class="choice-text">${c}</span>
+      </button></li>
     `).join('')}
   </ul>
   <div id="result"></div>
@@ -23,7 +30,7 @@ window.addEventListener('message', (e) => {
     const msg = e.data;
     if (msg.type === 'result') {
         const resultEl = document.getElementById('result');
-        resultEl.textContent = msg.correct ? '正解！' : `不正解。正解は「${quiz.choices[msg.answer]}」`;
+        resultEl.textContent = msg.correct ? '正解！' : `不正解。正解は「${labels[msg.answer]}: ${quiz.choices[msg.answer]}」`;
         resultEl.className = msg.correct ? 'correct' : 'incorrect';
         resultEl.insertAdjacentHTML('beforeend', `<p class="explanation">${msg.explanation}</p>`);
         resultEl.insertAdjacentHTML('beforeend', `<button id="next-btn">次の問題を表示する</button>`);

@@ -12,10 +12,17 @@ body {
     margin-bottom: 8px;
 }
 
+#question-box {
+    border: 1px solid var(--vscode-panel-border, var(--vscode-editorGroup-border));
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    background: var(--vscode-editor-inactiveSelectionBackground, rgba(128,128,128,0.1));
+}
+
 #question {
     font-size: 1.1em;
     font-weight: bold;
-    margin-bottom: 16px;
     line-height: 1.5;
 }
 
@@ -32,13 +39,26 @@ body {
 #choices button {
     width: 100%;
     text-align: left;
-    padding: 8px 12px;
+    padding: 10px 14px;
     background: var(--vscode-button-secondaryBackground);
     color: var(--vscode-button-secondaryForeground);
-    border: 1px solid var(--vscode-button-border, transparent);
+    border: 1px solid var(--vscode-button-border, var(--vscode-panel-border, rgba(128,128,128,0.4)));
     border-radius: 4px;
     cursor: pointer;
     font-size: inherit;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.choice-label {
+    font-weight: bold;
+    min-width: 1.5em;
+    flex-shrink: 0;
+}
+
+.choice-text {
+    line-height: 1.4;
 }
 
 #choices button:hover:not(:disabled) {
