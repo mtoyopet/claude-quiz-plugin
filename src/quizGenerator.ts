@@ -14,8 +14,9 @@ const PROMPT = (topic: string) => `
 - 概念理解問題（用語の定義、仕組み、原則の理解）
 - コマンド/構文理解問題（CLIコマンド、APIの使い方、オプションの意味）
 
-以下の種類の問題は生成しないでください：
+【禁止】以下の種類の問題は絶対に生成しないでください：
 - コードスニペットの実行結果・出力を問う問題（コードリーディング問題）
+【禁止】question フィールドにコードブロック（\`\`\` で囲まれた部分）を含めてはなりません。
 
 以下のJSONフォーマットのみで回答してください。説明文や前後の文章は不要です。
 
@@ -29,6 +30,10 @@ const PROMPT = (topic: string) => `
 answerは正解の選択肢のインデックス（0〜3）です。
 `.trim();
 
+function containsCode(text: string): boolean {
+    return /```/.test(text);
+}
+
 export async function generateQuiz(topic: string | null): Promise<Quiz> {
     const apiKey = vscode.workspace.getConfiguration('claudeQuiz').get<string>('anthropicApiKey');
     if (!apiKey) {
@@ -38,21 +43,30 @@ export async function generateQuiz(topic: string | null): Promise<Quiz> {
     const client = new Anthropic({ apiKey });
     const effectiveTopic = topic ?? 'IT技術全般';
 
-    const message = await client.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 512,
-        messages: [{ role: 'user', content: PROMPT(effectiveTopic) }],
-    });
+    const MAX_RETRIES = 3;
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        const message = await client.messages.create({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 512,
+            messages: [{ role: 'user', content: PROMPT(effectiveTopic) }],
+        });
 
-    const raw  = message.content.find(b => b.type === 'text')?.text ?? '';
-    const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    const json = JSON.parse(text);
+        const raw  = message.content.find(b => b.type === 'text')?.text ?? '';
+        const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        const json = JSON.parse(text);
 
-    return {
-        topic: effectiveTopic,
-        question: json.question,
-        choices: json.choices,
-        answer: json.answer,
-        explanation: json.explanation,
-    };
+        if (containsCode(json.question)) {
+            continue;
+        }
+
+        return {
+            topic: effectiveTopic,
+            question: json.question,
+            choices: json.choices,
+            answer: json.answer,
+            explanation: json.explanation,
+        };
+    }
+
+    throw new Error('コードリーディング問題以外の問題を生成できませんでした。再度お試しください。');
 }
