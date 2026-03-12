@@ -1,4 +1,5 @@
 {
+  "publisher": "mtoyopet",
   "name": "claude-quiz-plugin",
   "displayName": "Claude Quiz",
   "description": "Shows IT tech quizzes while Claude Code is thinking",
