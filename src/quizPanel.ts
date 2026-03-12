@@ -90,7 +90,6 @@ export class QuizPanel {
     }
 
     reset(): void {
-        this.isAnswered = true;
         this.isShowingResult = false;
     }
 
