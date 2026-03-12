@@ -22,6 +22,7 @@ document.body.innerHTML = `
 document.getElementById('choices').addEventListener('click', (e) => {
     const btn = e.target.closest('button');
     if (!btn) { return; }
+    btn.classList.add('selected');
     document.querySelectorAll('button').forEach(b => b.disabled = true);
     vscode.postMessage({ type: 'answer', index: Number(btn.dataset.index) });
 });
@@ -32,6 +33,10 @@ window.addEventListener('message', (e) => {
         const resultEl = document.getElementById('result');
         resultEl.textContent = msg.correct ? '正解！' : `不正解。正解は「${labels[msg.answer]}: ${quiz.choices[msg.answer]}」`;
         resultEl.className = msg.correct ? 'correct' : 'incorrect';
+        if (!msg.correct) {
+            const correctBtn = document.querySelector(`#choices button[data-index="${msg.answer}"]`);
+            correctBtn?.classList.add('correct-answer');
+        }
         resultEl.insertAdjacentHTML('beforeend', `<p class="explanation">${msg.explanation}</p>`);
         resultEl.insertAdjacentHTML('beforeend', `<button id="next-btn">次の問題を表示する</button>`);
 

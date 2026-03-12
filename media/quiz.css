@@ -70,6 +70,20 @@ body {
     cursor: default;
 }
 
+#choices button.selected {
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border-color: var(--vscode-button-background);
+    opacity: 1;
+}
+
+#choices button.correct-answer {
+    background: var(--vscode-testing-iconPassed, #2d7a2d);
+    color: white;
+    border-color: var(--vscode-testing-iconPassed, #2d7a2d);
+    opacity: 1;
+}
+
 #result {
     margin-top: 16px;
     padding: 12px;
