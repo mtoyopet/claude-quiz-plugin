@@ -14,6 +14,7 @@ export class QuizPanel {
     private readonly extensionUri: vscode.Uri;
     private isAnswered = true;
     private isShowingResult = false;
+    private allowCreate = true;
     private currentQuiz: Quiz | null = null;
     onNextQuiz: (() => void) | null = null;
     onShowHistory: (() => void) | null = null;
@@ -24,6 +25,9 @@ export class QuizPanel {
 
     show(quiz: Quiz): void {
         if (this.panel && (!this.isAnswered || this.isShowingResult)) {
+            return;
+        }
+        if (!this.panel && !this.allowCreate) {
             return;
         }
 
@@ -50,6 +54,7 @@ export class QuizPanel {
             this.panel = null;
             this.isAnswered = true;
             this.isShowingResult = false;
+            this.allowCreate = false;
         });
 
         this.panel.webview.onDidReceiveMessage((msg) => {
@@ -87,6 +92,10 @@ export class QuizPanel {
     reset(): void {
         this.isAnswered = true;
         this.isShowingResult = false;
+    }
+
+    enableCreate(): void {
+        this.allowCreate = true;
     }
 
     dispose(): void {

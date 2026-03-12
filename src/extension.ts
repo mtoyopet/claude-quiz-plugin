@@ -94,6 +94,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     const showQuiz = vscode.commands.registerCommand('claudeQuiz.showQuiz', async () => {
+        quizPanel.enableCreate();
         const topic = sessionContext.inferTopic();
         try {
             const quiz = await generateQuiz(topic);
