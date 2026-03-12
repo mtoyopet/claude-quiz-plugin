@@ -55,13 +55,13 @@ export function activate(context: vscode.ExtensionContext) {
                 PreToolUse: [{
                     hooks: [{
                         type: 'command',
-                        command: 'echo \'{"status":"start","tool":"$CLAUDE_TOOL_NAME","input":"$CLAUDE_TOOL_INPUT"}\' > /tmp/claude_quiz_state.json',
+                        command: `python3 -c "import sys,json; d=json.load(sys.stdin); open('/tmp/claude_quiz_state.json','w').write(json.dumps({'status':'start','tool':d.get('tool_name',''),'input':str(d.get('tool_input',''))}))"`,
                     }],
                 }],
                 Stop: [{
                     hooks: [{
                         type: 'command',
-                        command: 'echo \'{"status":"stop"}\' > /tmp/claude_quiz_state.json',
+                        command: `echo '{"status":"stop"}' > /tmp/claude_quiz_state.json`,
                     }],
                 }],
             };

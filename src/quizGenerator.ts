@@ -37,7 +37,8 @@ export async function generateQuiz(topic: string | null): Promise<Quiz> {
         messages: [{ role: 'user', content: PROMPT(effectiveTopic) }],
     });
 
-    const text = message.content.find(b => b.type === 'text')?.text ?? '';
+    const raw  = message.content.find(b => b.type === 'text')?.text ?? '';
+    const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
     const json = JSON.parse(text);
 
     return {
